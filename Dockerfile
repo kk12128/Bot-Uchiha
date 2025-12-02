@@ -1,13 +1,17 @@
+# build stage
 FROM node:20-alpine AS build
 WORKDIR /app
 
+# copy package + install
 COPY package.json package-lock.json* ./
 RUN npm ci --silent
 
+# copy source and build
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine
+# production image
+FROM node:20-alpine AS prod
 WORKDIR /app
 
 COPY package.json ./
