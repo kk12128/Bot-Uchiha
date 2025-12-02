@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import rateLimit from "express-rate-limit";
 import { Request, Response, NextFunction } from "express";
-import logger from "./logger.js";
+import logger from "./logger";
 
 export function verifySignature(req: Request, res: Response, next: NextFunction) {
   const secret = process.env.APP_SECRET;
@@ -18,8 +18,8 @@ export function verifySignature(req: Request, res: Response, next: NextFunction)
   const expected = `sha256=${hmac}`;
 
   try {
-    const a = Buffer.from(expected);
-    const b = Buffer.from(signature);
+    const a = Buffer.from(expected, "utf8");
+    const b = Buffer.from(signature, "utf8");
     if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
       logger.warn("Assinatura inválida");
       return res.sendStatus(401);
